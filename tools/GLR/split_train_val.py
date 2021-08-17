@@ -1,4 +1,6 @@
 import random
+
+import mmcv
 import numpy as np
 import os
 import pandas as pd
@@ -9,8 +11,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--raw_data', default='data/Recognition/train.csv')
     parser.add_argument('--val_ratio', default=0.1, type=float)
-    parser.add_argument('--train_out', default='data/Recognition/train_dev.txt')
-    parser.add_argument('--val_out', default='data/Recognition/val_dev.txt')
+    parser.add_argument('--train_out', default='data/generated_anns/Recognition/')
+    parser.add_argument('--val_out', default='data/generated_anns/Recognition/')
     parser.add_argument('--seed', default=1, type=int)
     args = parser.parse_args()
     return args
@@ -26,8 +28,12 @@ def main():
     val_num = int(len(data) * args.val_ratio)
     val_data = data.iloc[:val_num]
     train_data = data.iloc[val_num:]
-    val_data.to_csv(args.val_out, sep=' ', index=False, header=None)
-    train_data.to_csv(args.train_out, sep=' ', index=False, header=None)
+    mmcv.mkdir_or_exist(args.val_out)
+    mmcv.mkdir_or_exist(args.train_out)
+    val_out = os.path.join(args.val_out, 'val_dev.txt')
+    train_out = os.path.join(args.train_out, 'train_dev.txt')
+    val_data.to_csv(val_out, sep=' ', index=False, header=None)
+    train_data.to_csv(train_out, sep=' ', index=False, header=None)
     # max_category_id = 203092
     # min_category_id = 1
 
