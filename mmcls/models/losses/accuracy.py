@@ -3,7 +3,38 @@ from numbers import Number
 import numpy as np
 import torch
 import torch.nn as nn
+from mmcv.runner import IterTimerHook
 
+def my_accuracy_numpy(pred, target, topk=1, thrs=0.):
+    if isinstance(thrs, Number):
+        thrs = (thrs, )
+        res_single = True
+    elif isinstance(thrs, tuple):
+        res_single = False
+    else:
+        raise TypeError(
+            f'thrs should be a number or tuple, but got {type(thrs)}.')
+
+    res = []
+    num = pred.shape[0]
+    pred_label = pred[::2].astype(np.int64)
+    pred_score = pred[1::2]
+    # pred_label = pred.argsort(axis=1)[:, -maxk:][:, ::-1]
+    # pred_score = np.sort(pred, axis=1)[:, -maxk:][:, ::-1]
+
+    for k in topk:
+        correct_k = pred_label[:, :k] == target.reshape(-1, 1)
+        res_thr = []
+        for thr in thrs:
+            # Only prediction values larger than thr are counted as correct
+            _correct_k = correct_k & (pred_score[:, :k] > thr)
+            _correct_k = np.logical_or.reduce(_correct_k, axis=1)
+            res_thr.append(_correct_k.sum() * 100. / num)
+        if res_single:
+            res.append(res_thr[0])
+        else:
+            res.append(res_thr)
+    return res
 
 def accuracy_numpy(pred, target, topk=1, thrs=0.):
     if isinstance(thrs, Number):
@@ -91,16 +122,9 @@ def accuracy(pred, target, topk=1, thrs=0.):
         return_single = True
     else:
         return_single = False
+    assert isinstance(pred, np.ndarray) and isinstance(target, np.ndarray)
 
-    if isinstance(pred, torch.Tensor) and isinstance(target, torch.Tensor):
-        res = accuracy_torch(pred, target, topk, thrs)
-    elif isinstance(pred, np.ndarray) and isinstance(target, np.ndarray):
-        res = accuracy_numpy(pred, target, topk, thrs)
-    else:
-        raise TypeError(
-            f'pred and target should both be torch.Tensor or np.ndarray, '
-            f'but got {type(pred)} and {type(target)}.')
-
+    res = my_accuracy_numpy(pred, target, topk, thrs)
     return res[0] if return_single else res
 
 

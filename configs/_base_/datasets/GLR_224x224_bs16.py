@@ -25,17 +25,16 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_prefix='data/Recognition/train',
-        ann_file='data/Recognition/train_dev.txt',
+        ann_file='data/generated_anns/Recognition/train_dev.txt',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_prefix='data/Recognition/train',
-        ann_file='data/Recognition/val_dev.txt',
+        ann_file='data/generated_anns/Recognition/val_dev.txt',
         pipeline=test_pipeline),
     test=dict(
         # replace `data/val` with `data/test` for standard test
         type=dataset_type,
-        data_prefix='data/imagenet/val',
-        ann_file='data/imagenet/meta/val.txt',
+        data_prefix='data/Recognition/test',
+        ann_file='data/generated_anns/Recognition/test_dev.txt',
         pipeline=test_pipeline))
-evaluation = dict(interval=1, metric='accuracy')

@@ -27,6 +27,7 @@ def parse_args():
     parser.add_argument('config', help='test config file path')
     parser.add_argument('checkpoint', help='checkpoint file')
     parser.add_argument('--out', help='output result file')
+    parser.add_argument('--format_only', default=False, action='store_true', help='format for submission')
     parser.add_argument(
         '--metrics',
         type=str,
@@ -92,7 +93,7 @@ def main():
     cfg.model.pretrained = None
     cfg.data.test.test_mode = True
 
-    assert args.metrics or args.out, \
+    assert args.metrics or args.out or args.format_only, \
         'Please specify at least one of output path and evaluation metrics.'
 
     # init distributed env first, since logger depends on the dist info.
@@ -155,6 +156,8 @@ def main():
             results.update(eval_results)
             for k, v in eval_results.items():
                 print(f'\n{k} : {v:.2f}')
+        if args.format_only:
+            dataset.format_results(outputs)
         if args.out:
             scores = np.vstack(outputs)
             pred_score = np.max(scores, axis=1)

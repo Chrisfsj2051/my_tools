@@ -11,13 +11,14 @@ from mmcls.datasets import build_dataloader, build_dataset
 from mmcls.utils import get_root_logger
 
 # TODO import eval hooks from mmcv and delete them from mmcls
-try:
-    from mmcv.runner.hooks import EvalHook, DistEvalHook
-except ImportError:
-    warnings.warn('DeprecationWarning: EvalHook and DistEvalHook from mmcls '
-                  'will be deprecated.'
-                  'Please install mmcv through master branch.')
-    from mmcls.core import EvalHook, DistEvalHook
+# try:
+#     from mmcv.runner.hooks import EvalHook, DistEvalHook
+# except ImportError:
+#     warnings.warn('DeprecationWarning: EvalHook and DistEvalHook from mmcls '
+#                   'will be deprecated.'
+#                   'Please install mmcv through master branch.')
+#     from mmcls.core import EvalHook, DistEvalHook
+from mmcls.core import EvalHook, DistEvalHook
 
 # TODO import optimizer hook from mmcv and delete them from mmcls
 try:
@@ -150,7 +151,9 @@ def train_model(model,
         eval_cfg = cfg.get('evaluation', {})
         eval_cfg['by_epoch'] = cfg.runner['type'] != 'IterBasedRunner'
         eval_hook = DistEvalHook if distributed else EvalHook
-        runner.register_hook(eval_hook(val_dataloader, **eval_cfg))
+        # runner.register_hook(eval_hook(val_dataloader, **eval_cfg))
+        runner.register_hook(
+            eval_hook(val_dataloader, **eval_cfg), priority='LOW')
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)
