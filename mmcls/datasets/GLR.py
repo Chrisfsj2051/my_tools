@@ -35,7 +35,7 @@ class GoogleLandmarkDataset(BaseDataset):
     # def __len__(self):
     #     return 3000
 
-    def format_results(self, results):
+    def format_results(self, results, thr):
         keys = [x['img_info']['filename'][6:-4] for x in self.data_infos]
         values = [(x[0][0], x[1][0]) for x in results]
         with open('submission.csv', 'w', newline='') as submission_csv:
@@ -44,7 +44,10 @@ class GoogleLandmarkDataset(BaseDataset):
             for image_id, prediction in zip(keys, values):
                 label = prediction[0] + 1
                 score = prediction[1]
-                csv_writer.writerow({'id': image_id, 'landmarks': f'{label} {score}'})
+                if score >= thr:
+                    csv_writer.writerow({'id': image_id, 'landmarks': f'{label} {score}'})
+                else:
+                    csv_writer.writerow({'id': image_id, 'landmarks': ''})
 
         # data_dict = dict(id=keys, landmarks=values)
         # data = pd.DataFrame(data_dict)

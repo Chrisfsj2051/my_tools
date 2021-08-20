@@ -30,6 +30,7 @@ def parse_args():
     parser.add_argument('checkpoint', help='checkpoint file')
     parser.add_argument('--out', help='output result file')
     parser.add_argument('--format_only', default=False, action='store_true', help='format for submission')
+    parser.add_argument('--thr', default=0.0, type=float)
     parser.add_argument(
         '--metrics',
         type=str,
@@ -159,7 +160,7 @@ def main():
             for k, v in eval_results.items():
                 print(f'\n{k} : {v:.2f}')
         if args.format_only:
-            dataset.format_results(outputs)
+            dataset.format_results(outputs, args.thr)
         if args.out:
             scores = np.vstack(outputs)
             pred_score = np.max(scores, axis=1)
