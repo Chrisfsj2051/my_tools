@@ -46,9 +46,9 @@ class GoogleLandmarkDataset(BaseDataset):
                 score = prediction[1]
                 csv_writer.writerow({'id': image_id, 'landmarks': f'{label} {score}'})
 
-        data_dict = dict(id=keys, landmarks=values)
-        data = pd.DataFrame(data_dict)
-        data.to_csv('submission.csv', index=False, quoting=csv.QUOTE_NONE, doublequote=False, escapechar=None, sep=',')
+        # data_dict = dict(id=keys, landmarks=values)
+        # data = pd.DataFrame(data_dict)
+        # data.to_csv('submission.csv', index=False, quoting=csv.QUOTE_NONE, doublequote=False, escapechar=None, sep=',')
 
     def evaluate(self,
                  results,
