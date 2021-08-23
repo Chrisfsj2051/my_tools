@@ -1,3 +1,4 @@
+import copy
 import warnings
 
 from mmcls.core import support, precision_recall_f1
@@ -26,14 +27,22 @@ class GoogleLandmarkDataset(BaseDataset):
             filename, gt_label = data
             gt_label = int(gt_label)
             assert gt_label >= 1
-            info = {'img_prefix': self.data_prefix}
+            # info = {'img_prefix': self.data_prefix}
+            info = {}
             info['img_info'] = {'filename': process_filename(filename)}
-            info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
+            # info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
+            info['gt_label'] = gt_label - 1
             data_infos.append(info)
         return data_infos
 
     # def __len__(self):
     #     return 3000
+
+    def prepare_data(self, idx):
+        results = copy.deepcopy(self.data_infos[idx])
+        results['img_prefix'] = self.data_prefix
+        results['gt_label'] = np.array(results['gt_label'], dtype=np.int64)
+        return self.pipeline(results)
 
     def format_results(self, results, thr):
         keys = [x['img_info']['filename'][6:-4] for x in self.data_infos]
