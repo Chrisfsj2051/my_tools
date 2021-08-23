@@ -1,19 +1,19 @@
 _base_ = [
-    '../_base_/models/resnet34.py', '../_base_/datasets/GLR_224x224_bs16.py',
+    '../_base_/models/resnet152.py', '../_base_/datasets/GLR_224x224_bs16.py',
     '../_base_/schedules/GLR_bs16_10e.py', '../_base_/default_runtime.py'
 ]
 
 # fp16 = dict(loss_scale='dynamic')
 # resume_from = 'work_dirs/debug/iter_520000.pth'
 # evaluation = dict(interval=10000, metric='accuracy')
-data = dict(workers_per_gpu=4, samples_per_gpu=32)
+data = dict(workers_per_gpu=4, samples_per_gpu=128)
 
 # model settings
 model = dict(
     backbone=dict(
         init_cfg=dict(
             type='Pretrained',
-            checkpoint='torchvision://resnet34')
+            checkpoint='torchvision://resnet152')
     ),
     head=dict(
         num_classes=81313
