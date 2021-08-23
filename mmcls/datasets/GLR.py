@@ -12,6 +12,11 @@ import csv
 @DATASETS.register_module()
 class GoogleLandmarkDataset(BaseDataset):
 
+    def __init__(self, **kwargs):
+        super(GoogleLandmarkDataset, self).__init__(**kwargs)
+        self.unique_ids = np.load('configs/unique_landmark_ids.np.npy')  # 81311
+        self.id_map = {self.unique_ids[i]: i for i in range(len(self.unique_ids))}
+
     def process_filename(self, x):
         return f'{x[0]}/{x[1]}/{x[2]}/{x}.jpg'
 
@@ -24,26 +29,29 @@ class GoogleLandmarkDataset(BaseDataset):
         for data in content:
             if len(data) == 1:
                 data = (data[0], 1)
-            filename, gt_label = data
-            gt_label = int(gt_label)
-            assert gt_label >= 1
-            # info = {'img_prefix': self.data_prefix}
-            info = {}
-            info['img_info'] = {'filename': filename}
-            # info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
-            info['gt_label'] = gt_label - 1
-            data_infos.append(info)
+            data_infos.append(data)
+            # filename, gt_label = data
+            # gt_label = int(gt_label)
+            # assert gt_label >= 1
+            # # info = {'img_prefix': self.data_prefix}
+            # info = {}
+            # info['img_info'] = {'filename': filename}
+            # # info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
+            # info['gt_label'] = self.id_map[gt_label]
+            # data_infos.append(info)
         return data_infos
 
     # def __len__(self):
     #     return 3000
 
     def prepare_data(self, idx):
-        results = copy.deepcopy(self.data_infos[idx])
-        filename = results['img_info']['filename']
+        data = copy.deepcopy(self.data_infos[idx])
+        filename = self.process_filename(data[0])
+        gt_label = int(data[1])
+        results = {}
         results['img_prefix'] = self.data_prefix
-        results['gt_label'] = np.array(results['gt_label'], dtype=np.int64)
-        results['img_info'] = {'filename': self.process_filename(filename)}
+        results['gt_label'] = np.array(gt_label, dtype=np.int64)
+        results['img_info'] = {'filename': filename}
         return self.pipeline(results)
 
     def format_results(self, results, thr):
@@ -53,7 +61,7 @@ class GoogleLandmarkDataset(BaseDataset):
             csv_writer = csv.DictWriter(submission_csv, fieldnames=['id', 'landmarks'])
             csv_writer.writeheader()
             for image_id, prediction in zip(keys, values):
-                label = prediction[0] + 1
+                label = self.unique_ids[prediction[0]]
                 score = prediction[1]
                 if score >= thr:
                     csv_writer.writerow({'id': image_id, 'landmarks': f'{label} {score}'})

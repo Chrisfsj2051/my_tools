@@ -16,7 +16,7 @@ model = dict(
             checkpoint='torchvision://resnet34')
     ),
     head=dict(
-        num_classes=203092
+        num_classes=81313
     )
 )
 
