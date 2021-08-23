@@ -47,7 +47,7 @@ class GoogleLandmarkDataset(BaseDataset):
     def prepare_data(self, idx):
         data = copy.deepcopy(self.data_infos[idx])
         filename = self.process_filename(data[0])
-        gt_label = int(data[1])
+        gt_label = self.id_map[int(data[1])]
         results = {}
         results['img_prefix'] = self.data_prefix
         results['gt_label'] = np.array(gt_label, dtype=np.int64)
@@ -71,6 +71,16 @@ class GoogleLandmarkDataset(BaseDataset):
         # data_dict = dict(id=keys, landmarks=values)
         # data = pd.DataFrame(data_dict)
         # data.to_csv('submission.csv', index=False, quoting=csv.QUOTE_NONE, doublequote=False, escapechar=None, sep=',')
+
+    def get_gt_labels(self):
+        """Get all ground-truth labels (categories).
+
+        Returns:
+            list[int]: categories for all images.
+        """
+        gt_labels = [self.id_map[int(x[1])] for x in self.data_infos]
+        gt_labels = np.array(gt_labels)
+        return gt_labels
 
     def evaluate(self,
                  results,
