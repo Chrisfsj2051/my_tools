@@ -12,10 +12,10 @@ import csv
 @DATASETS.register_module()
 class GoogleLandmarkDataset(BaseDataset):
 
-    def load_annotations(self):
-        def process_filename(x):
-            return f'{x[0]}/{x[1]}/{x[2]}/{x}.jpg'
+    def process_filename(self, x):
+        return f'{x[0]}/{x[1]}/{x[2]}/{x}.jpg'
 
+    def load_annotations(self):
         ann_file = self.ann_file
         with open(ann_file, 'r') as f:
             content = f.readlines()
@@ -29,7 +29,7 @@ class GoogleLandmarkDataset(BaseDataset):
             assert gt_label >= 1
             # info = {'img_prefix': self.data_prefix}
             info = {}
-            info['img_info'] = {'filename': process_filename(filename)}
+            info['img_info'] = {'filename': filename}
             # info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
             info['gt_label'] = gt_label - 1
             data_infos.append(info)
@@ -40,8 +40,10 @@ class GoogleLandmarkDataset(BaseDataset):
 
     def prepare_data(self, idx):
         results = copy.deepcopy(self.data_infos[idx])
+        filename = results['img_info']['filename']
         results['img_prefix'] = self.data_prefix
         results['gt_label'] = np.array(results['gt_label'], dtype=np.int64)
+        results['img_info'] = {'filename': self.process_filename(filename)}
         return self.pipeline(results)
 
     def format_results(self, results, thr):
