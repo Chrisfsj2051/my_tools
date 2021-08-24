@@ -3,7 +3,7 @@ _base_ = [
     '../_base_/schedules/GLR_bs16_20k.py', '../_base_/default_runtime.py'
 ]
 
-fp16 = dict(loss_scale='dynamic')
+# fp16 = dict(loss_scale='dynamic')
 # yapf:disable
 log_config = dict(
     interval=1000,
