@@ -6,13 +6,13 @@ _base_ = [
 # fp16 = dict(loss_scale='dynamic')
 # yapf:disable
 log_config = dict(
-    interval=1000,
+    interval=100,
     hooks=[
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
     ])
-checkpoint_config = dict(interval=10000)
-evaluation = dict(interval=20000, metric='accuracy')
+checkpoint_config = dict(interval=5000)
+evaluation = dict(interval=1000, metric='accuracy')
 data = dict(workers_per_gpu=4, samples_per_gpu=64)
 
 # model settings
