@@ -4,7 +4,7 @@ import warnings
 from mmcls.core import support, precision_recall_f1
 from mmcls.datasets import BaseDataset, DATASETS
 import numpy as np
-import pandas as pd
+import pyarrow as pa
 from mmcls.models import accuracy
 import csv
 
@@ -39,13 +39,13 @@ class GoogleLandmarkDataset(BaseDataset):
             # # info['gt_label'] = np.array(gt_label - 1, dtype=np.int64)
             # info['gt_label'] = self.id_map[gt_label]
             # data_infos.append(info)
-        return data_infos
+        return pa.array(data_infos)
 
     # def __len__(self):
     #     return 3000
 
     def prepare_data(self, idx):
-        data = copy.deepcopy(self.data_infos[idx])
+        data = copy.deepcopy(self.data_infos[idx].as_py())
         filename = self.process_filename(data[0])
         gt_label = self.id_map[int(data[1])]
         results = {}

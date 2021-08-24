@@ -4,7 +4,7 @@ _base_ = [
 ]
 
 # fp16 = dict(loss_scale='dynamic')
-resume_from = 'work_dirs/debug/iter_520000.pth'
+# resume_from = 'work_dirs/debug/iter_520000.pth'
 evaluation = dict(interval=10000, metric='accuracy')
 data = dict(workers_per_gpu=4, samples_per_gpu=32)
 
