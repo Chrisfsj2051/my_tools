@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/models/resnet152.py', '../_base_/datasets/GLR_224x224_bs16.py',
-    '../_base_/schedules/GLR_bs16_10e.py', '../_base_/default_runtime.py'
+    '../_base_/schedules/GLR_bs16_20k.py', '../_base_/default_runtime.py'
 ]
 
 # fp16 = dict(loss_scale='dynamic')
@@ -11,8 +11,8 @@ log_config = dict(
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
     ])
-# checkpoint_config = dict(interval=5000)
-# evaluation = dict(interval=1000, metric='accuracy')
+checkpoint_config = dict(interval=5000)
+evaluation = dict(interval=1000, metric='accuracy')
 data = dict(workers_per_gpu=4, samples_per_gpu=64)
 
 # model settings
