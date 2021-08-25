@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/resnet152.py', '../_base_/datasets/GLR_224x224_bs16.py',
+    '../_base_/models/resnet152.py', '../_base_/datasets/GLR_224x224_bs16_tpu.py',
     '../_base_/schedules/GLR_bs16_10e.py', '../_base_/default_runtime.py'
 ]
 
