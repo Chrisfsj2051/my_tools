@@ -15,6 +15,6 @@ model = dict(
     )
 )
 
-optimizer_config = dict(grad_clip=dict(max_norm=1.0))
+optimizer_config = dict(grad_clip=dict(_delete_=True, max_norm=1.0))
 data = dict(workers_per_gpu=1, samples_per_gpu=32)
 
