@@ -6,11 +6,13 @@ _base_ = [
 # model settings
 model = dict(
     backbone=dict(
+        depth=152,
         init_cfg=dict(
             type='Pretrained',
             checkpoint='torchvision://resnet152')
     ),
     head=dict(
+        in_channels=2048,
         num_classes=81313
     )
 )
