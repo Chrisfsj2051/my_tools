@@ -3,19 +3,6 @@ _base_ = [
     '../_base_/schedules/GLR_bs16_10e.py', '../_base_/default_runtime.py'
 ]
 
-# fp16 = dict(loss_scale='dynamic')
-# yapf:disable
-log_config = dict(
-    interval=100,
-    hooks=[
-        dict(type='TextLoggerHook'),
-        # dict(type='TensorboardLoggerHook')
-    ])
-
-# checkpoint_config = dict(interval=5000)
-# evaluation = dict(interval=1000, metric='accuracy')
-data = dict(workers_per_gpu=4, samples_per_gpu=64)
-
 # model settings
 model = dict(
     backbone=dict(
@@ -27,3 +14,7 @@ model = dict(
         num_classes=81313
     )
 )
+
+optimizer_config = dict(grad_clip=dict(max_norm=1.0))
+data = dict(workers_per_gpu=1, samples_per_gpu=32)
+
